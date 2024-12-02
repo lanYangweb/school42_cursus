@@ -6,121 +6,201 @@
 /*   By: layang <layang@student.42perpignan.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 10:47:20 by layang            #+#    #+#             */
-/*   Updated: 2024/11/25 20:03:00 by layang           ###   ########.fr       */
+/*   Updated: 2024/12/02 11:23:16 by layang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char buffer[BUFFER_SIZE];
-
-static char	*process_buffer(char	*line, size_t *len, ssize_t *bytes_read)
+/* static char	*get_line(char	*res)
 {
-	size_t	index;
+	char	*line;
+	int		len;
+	int		i;
 
-	if (find_newline(buffer, *bytes_read, &index))
-	{
-		line = alloc_copy(line, *len, buffer, index + 1);
-		if (!line)
-			return (NULL);
-		ft_memmove(buffer, buffer + index + 1, *bytes_read - index - 1);
-		buffer[*bytes_read - index - 1] = '\0';
-		return (line);
-	}
-	line = alloc_copy(line, *len, buffer, *bytes_read);
+	if (ft_strchr(res, '\n'))
+		len = ft_strchr(res, '\n') - res + 1;
+	else
+		len = ft_strlen(res);
+	line = (char *)malloc(len + 1);
 	if (!line)
 		return (NULL);
-	*len += *bytes_read;
+	i = 0;
+	while (i < len)
+	{
+		line[i] = res[i];
+		i++;
+	}
+	line[i] = '\0';
 	return (line);
 }
 
-static char *read_and_process(int fd, char *line, size_t *len)
+static char	*res_afterline(char	*res)
 {
-	ssize_t bytes_read;
+	char	*for_free;
+	char	*new_res;
 
-	bytes_read = ft_strlen(buffer);
-	while (bytes_read > 0 || (bytes_read = read(fd, buffer, BUFFER_SIZE)) > 0)
+	for_free = res;
+	if (ft_strchr(res, '\n'))
+		new_res = ft_strdup(ft_strchr(res, '\n') + 1);
+	else
+		new_res = ft_strdup("");
+	free(for_free);
+	for_free = NULL;
+	return (new_res);
+}
+
+static char	*read_line(int fd, char	*res, char	*buffer)
+{
+	ssize_t	bytes;
+	char	*for_free;
+	char	*line;
+	
+	bytes = 1;
+	while (bytes > 0)
 	{
-		line = process_buffer(line, len, &bytes_read);
-		if (line)
-			return (line);
-		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		bytes = read(fd, buffer, BUFFER_SIZE);
+		if (bytes == -1)
+			return (NULL);
+		buffer[bytes] = '\0';
+		for_free = res;
+		res = ft_strjoin(for_free, buffer);
+		free(for_free);
+		for_free = NULL;
+		if (ft_strchr(buffer, '\n'))
+			break;
 	}
-	if (bytes_read == 0 && *len > 0)
-		return (line);
-	free(line);
-	return (NULL);
+	line = get_line(res);
+	res = res_afterline(res);
+	return (line);
 }
 
 char	*get_next_line(int fd)
 {
 	char	*line;
-	size_t	len;
-
+	static char	buffer[BUFFER_SIZE];
+	char	*res;
+	
 	line = NULL;
-	len = 0;
-	line = read_and_process(fd, line, &len);
+	res = NULL;
+	line = read_line(fd, res, buffer);
+	if (!line)
+		return (NULL);
+	return (line);
+} */
+
+static char	*get_line(char *res)
+{
+	char	*line;
+	int		len;
+	int		i;
+
+	if (ft_strchr(res, '\n'))
+		len = ft_strchr(res, '\n') - res + 1;
+	else
+		len = ft_strlen(res);
+	line = (char *)malloc(len + 1);
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		line[i] = res[i];
+		i++;
+	}
+	line[i] = '\0';
 	return (line);
 }
 
-/* int main()
+static char	*res_afterline(char *res)
 {
-	int fd = open("your_file.txt", O_RDONLY);
+	char	*new_res;
+
+	if (ft_strchr(res, '\n'))
+		new_res = ft_strdup(ft_strchr(res, '\n') + 1);
+	else
+		new_res = ft_strdup("");
+	free(res);
+	return (new_res);
+}
+
+static char	*read_line(int fd, char **res)
+{
+	ssize_t	bytes;
+	char	buffer[BUFFER_SIZE + 1];
+	char	*for_free;
+
+	while (1)
+	{
+		if (ft_strchr(*res, '\n'))
+			break;
+		bytes = read(fd, buffer, BUFFER_SIZE);
+		if (bytes == -1)
+			return (NULL);
+		if (bytes == 0)
+			break;
+		buffer[bytes] = '\0';
+		for_free = *res;
+		*res = ft_strjoin(for_free, buffer);
+		free(for_free);
+	}
+	if (**res == '\0')
+		return (NULL);
+	return (get_line(*res));
+}
+
+char	*get_next_line(int fd)
+{
+	static char	*res;
+	char		*line;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	if (!res)
+		res = ft_strdup("");
+	line = read_line(fd, &res);
+	if (!line)
+	{
+		free(res);
+		res = NULL;
+		return (NULL);
+	}
+	res = res_afterline(res);
+	return (line);
+}
+
+#include <fcntl.h>
+#include <stdio.h>
+
+int main(int argc, char **argv)
+{
+	int fd;
+	char *line;
+	// Check for correct argument count
+	if (argc != 2)
+	{
+		write(2, "Usage: ./a.out <filename>\n", 24);
+		return 1;
+	}
+	// Open the file for reading
+	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
 	{
 		perror("Error opening file");
 		return 1;
 	}
-
-	char *line;
-	while ((line = read_line(fd)) != NULL)
+	// Read lines from the file using get_next_line
+	while ((line = get_next_line(fd)) != NULL)
 	{
-		write(1, line, strlen(line));
+		// Print the line (don't forget to handle newline in the output)
+		printf("%s", line);
 		free(line);
 	}
-
+	// Close the file when done
 	close(fd);
-	return 0;
-} */
-/* 
-#include <fcntl.h>	// open
-#include <unistd.h> // read, write, close
-#include <stdio.h>	// perror
-
-int main()
-{
-	char buffer[128];
-	ssize_t bytesRead;
-
-	// open file
-	int fd = open("example.txt", O_RDONLY); // read only
-	if (fd == -1)
-	{
-		perror("Error opening file");
-		return (1);
-	}
-
-	// read file content
-	while ((bytesRead = read(fd, buffer, sizeof(buffer) - 1)) > 0)
-	{
-		buffer[bytesRead] = '\0';	 // make sure string end of NULL
-		write(1, buffer, bytesRead); // standart output: 1
-	}
-
-	if (bytesRead == -1)
-	{
-		perror("Error reading file");
-		close(fd);
-		return (1);
-	}
-
-	// close file
-	if (close(fd) == -1)
-	{
-		perror("Error closing file");
-		return (1);
-	}
-
 	return (0);
 }
+/* 
+cc get_next_line.c get_next_line_utils.c -Wall -Wextra -Werror 
+./a.out test.txt 
  */
