@@ -1,5 +1,5 @@
 # school42_cursus
-Cursus of School 42 from 2024 November.
+Cursus of School 42 from 2024 November. The git connected with school 42 is my another github account: [ISDouglas](https://github.com/ISDouglas/Ecole42_Cursus#) , which is more frequently pushed.
 
 List of projects finished:
 
