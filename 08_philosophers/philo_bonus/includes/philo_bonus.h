@@ -6,7 +6,7 @@
 /*   By: layang <layang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 14:19:02 by layang            #+#    #+#             */
-/*   Updated: 2025/05/20 19:07:01 by layang           ###   ########.fr       */
+/*   Updated: 2025/05/22 11:33:48 by layang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <sys/time.h>
 # include <fcntl.h>
 # include <signal.h>
+# include <string.h>
 
 # ifndef DEBUG_FORMATTING
 #  define DEBUG_FORMATTING 0
@@ -87,6 +88,7 @@ void	ft_free_philo(t_table	*tab, int sign);
 void	wait_some_philos(t_table *tab, int nb_created, pid_t dead_pid);
 void	failed_thread(char	*err, int sign, t_table	*tab);
 /* utils.c  5*/
+int		ft_is_numeric(const char	*str);
 size_t	ft_strlen(const char *s);
 int		ft_atoi(const char	*nptr);
 char	*ft_utoa(unsigned int n);

@@ -6,7 +6,7 @@
 /*   By: layang <layang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 12:17:10 by layang            #+#    #+#             */
-/*   Updated: 2025/05/16 17:24:07 by layang           ###   ########.fr       */
+/*   Updated: 2025/05/22 11:15:16 by layang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ int	wrong_input_check(t_table	*tab, char	*av5)
 {
 	if (av5)
 	{
+		if (!ft_is_numeric(av5))
+			return (printf("nb of times is not numeric.\n"), -1);
 		if (ft_atoi(av5) < 0)
 			return (printf("nb of times must eat should be positive.\n"), -1);
 		else

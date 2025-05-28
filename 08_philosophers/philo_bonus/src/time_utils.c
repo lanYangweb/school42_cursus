@@ -6,7 +6,7 @@
 /*   By: layang <layang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 14:03:41 by layang            #+#    #+#             */
-/*   Updated: 2025/05/19 14:46:28 by layang           ###   ########.fr       */
+/*   Updated: 2025/05/22 11:33:07 by layang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,4 +62,31 @@ void	print_status(t_status status, t_philo	*philo)
 		printf("%ld %d is thinking\n", now - philo->tab->start_time,
 			philo->id + 1);
 	sem_post(philo->tab->sems->s_print);
+}
+
+// move from utils.c
+int	ft_atoi(const char	*nptr)
+{
+	int	sign;
+	int	i;
+	int	res;
+
+	i = 0;
+	sign = 1;
+	res = 0;
+	while (nptr[i] == ' ' || nptr[i] == '\n' || nptr[i] == '\t'
+		|| nptr[i] == '\v' || nptr[i] == '\f' || nptr[i] == '\r')
+		i++;
+	if (nptr[i] == '-' || nptr[i] == '+')
+	{
+		if (nptr[i] == '-')
+			sign = -sign;
+		i++;
+	}
+	while (nptr[i] >= '0' && nptr[i] <= '9')
+	{
+		res = res * 10 + (nptr[i] - 48);
+		i++;
+	}
+	return (res * sign);
 }

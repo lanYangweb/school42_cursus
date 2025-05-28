@@ -6,46 +6,38 @@
 /*   By: layang <layang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 18:53:20 by layang            #+#    #+#             */
-/*   Updated: 2025/05/19 14:46:20 by layang           ###   ########.fr       */
+/*   Updated: 2025/05/22 11:33:26 by layang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-size_t	ft_strlen(const char *s)
+static int	ft_isdigit(int c)
 {
-	int	i;
-
-	i = 0;
-	while (s[i] != '\0')
-		i++;
-	return (i);
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
 }
 
-int	ft_atoi(const char	*nptr)
+int	ft_is_numeric(const char *str)
 {
-	int	sign;
 	int	i;
-	int	res;
 
 	i = 0;
-	sign = 1;
-	res = 0;
-	while (nptr[i] == ' ' || nptr[i] == '\n' || nptr[i] == '\t'
-		|| nptr[i] == '\v' || nptr[i] == '\f' || nptr[i] == '\r')
-		i++;
-	if (nptr[i] == '-' || nptr[i] == '+')
+	while (*str == ' ')
+		str++;
+	if (*str == '+' || *str == '-')
+		str++;
+	while (ft_isdigit(*str))
 	{
-		if (nptr[i] == '-')
-			sign = -sign;
+		str++;
 		i++;
 	}
-	while (nptr[i] >= '0' && nptr[i] <= '9')
-	{
-		res = res * 10 + (nptr[i] - 48);
-		i++;
-	}
-	return (res * sign);
+	while (*str == ' ')
+		str++;
+	if (*str == '\0' && i > 0)
+		return (1);
+	return (0);
 }
 
 static char	*ft_strdup(const char *s)

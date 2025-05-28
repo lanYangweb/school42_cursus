@@ -6,7 +6,7 @@
 /*   By: layang <layang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 15:29:26 by layang            #+#    #+#             */
-/*   Updated: 2025/05/20 19:19:59 by layang           ###   ########.fr       */
+/*   Updated: 2025/05/22 11:34:44 by layang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ static int	init_philos(t_table	*tab)
 		if (!tab->philos[i])
 			return (perror("malloc each philo"), free_philos(tab, i), 7);
 		phi = tab->philos[i];
+		memset(phi, 0, sizeof(t_philo));
 		phi->id = i;
-		phi->nb_eatp = 0;
 		phi->s_name = strjoin_free("/sem_phi_", ft_utoa(i));
 		phi->s_phi = sem_open(phi->s_name, O_CREAT, 0644, 1);
 		if (phi->s_phi == SEM_FAILED)
@@ -89,6 +89,18 @@ static int	wrong_input_check(t_table	*tab, char	*av5)
 	return (0);
 }
 
+static int	input_ctr(t_table	**tab, char	**av)
+{
+	if (!ft_is_numeric(av[1]) || !ft_is_numeric(av[2])
+		|| !ft_is_numeric(av[3]) || !ft_is_numeric(av[4]))
+		return (printf("numeric number needed, please.\n"), 1);
+	(*tab)->nb_phi = ft_atoi(av[1]);
+	(*tab)->t_die = ft_atoi(av[2]);
+	(*tab)->t_eat = ft_atoi(av[3]);
+	(*tab)->t_sleep = ft_atoi(av[4]);
+	return (0);
+}
+
 int	init_table(t_table	**tab, char	**av)
 {
 	int	start_sems;
@@ -97,10 +109,8 @@ int	init_table(t_table	**tab, char	**av)
 	*tab = malloc(sizeof(t_table));
 	if (!*tab)
 		return (perror("malloc table"), -1);
-	(*tab)->nb_phi = ft_atoi(av[1]);
-	(*tab)->t_die = ft_atoi(av[2]);
-	(*tab)->t_eat = ft_atoi(av[3]);
-	(*tab)->t_sleep = ft_atoi(av[4]);
+	if (input_ctr(tab, av))
+		return (-1);
 	if (wrong_input_check(*tab, av[5]))
 		return (-1);
 	(*tab)->pids = (pid_t *)malloc(sizeof(pid_t) * (*tab)->nb_phi);

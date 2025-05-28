@@ -6,7 +6,7 @@
 /*   By: layang <layang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/13 12:16:08 by layang            #+#    #+#             */
-/*   Updated: 2025/05/16 12:48:46 by layang           ###   ########.fr       */
+/*   Updated: 2025/05/22 11:21:17 by layang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ static int	init_philos(t_table	*tab)
 		if (!tab->philos[i])
 			return (perror("malloc each philo"),
 				destory_mutex_inphilos(tab->philos, i), 4);
+		memset(tab->philos[i], 0, sizeof(t_philo));
 		if (pthread_mutex_init(&tab->philos[i]->philo_lock, 0) != 0)
 			return (perror("pthread mutex philo lock "), free(tab->philos[i]),
 				destory_mutex_inphilos(tab->philos, i), 4);
@@ -73,6 +74,18 @@ static int	init_forks(t_table	*tab)
 	return (0);
 }
 
+static int	input_ctr(t_table	**tab, char	**av)
+{
+	if (!ft_is_numeric(av[1]) || !ft_is_numeric(av[2])
+		|| !ft_is_numeric(av[3]) || !ft_is_numeric(av[4]))
+		return (printf("numeric number needed, please.\n"), 1);
+	(*tab)->nb_phi = ft_atoi(av[1]);
+	(*tab)->t_die = ft_atoi(av[2]);
+	(*tab)->t_eat = ft_atoi(av[3]);
+	(*tab)->t_sleep = ft_atoi(av[4]);
+	return (0);
+}
+
 int	init_table(t_table	**tab, char	**av)
 {
 	int	start_forks;
@@ -81,12 +94,10 @@ int	init_table(t_table	**tab, char	**av)
 	*tab = malloc(sizeof(t_table));
 	if (!*tab)
 		return (perror("malloc table"), -1);
-	(*tab)->nb_phi = ft_atoi(av[1]);
-	(*tab)->t_die = ft_atoi(av[2]);
-	(*tab)->t_eat = ft_atoi(av[3]);
-	(*tab)->t_sleep = ft_atoi(av[4]);
+	if (input_ctr(tab, av))
+		return (free(*tab), -1);
 	if (wrong_input_check(*tab, av[5]))
-		return (-1);
+		return (free(*tab), -1);
 	start_forks = init_forks(*tab);
 	if (start_forks)
 		return (start_forks);

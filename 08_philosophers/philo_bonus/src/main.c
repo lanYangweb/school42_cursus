@@ -6,11 +6,21 @@
 /*   By: layang <layang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/16 14:31:37 by layang            #+#    #+#             */
-/*   Updated: 2025/05/20 19:54:06 by layang           ###   ########.fr       */
+/*   Updated: 2025/05/22 11:34:50 by layang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+size_t	ft_strlen(const char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i] != '\0')
+		i++;
+	return (i);
+}
 
 static void	eat_sleep_think(t_philo	*philo)
 {
@@ -52,12 +62,10 @@ static void	run_child_philo(t_table	*tab, int i)
 		pthread_join(tid_dead, NULL),
 		failed_thread("detach monitor eat thread", 1, tab);
 	}
+	if (philo->id % 2)
+		philo_pass_time(philo->tab->t_eat / 2);
 	while (1)
-	{
-		if (philo->id % 2)
-			philo_pass_time(philo->tab->t_eat / 2);
 		eat_sleep_think(philo);
-	}
 }
 
 static int	ft_start_philo(t_table	*tab)

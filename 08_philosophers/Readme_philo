@@ -1,0 +1,25 @@
+
+For the bonus part:
+
+We can use kill() followed by waitpid() to terminate the child processes, as suggested in the subject.
+However, this is a rather dirty way to end the processes, because they don’t exit normally—even though no memory leaks are reported by Valgrind.
+
+If you want each child process to call free() and exit() properly, you need to inform all philosopher processes (child processes) to exit by themselves when a philosopher dies or when all have eaten enough.
+
+Currently, the code does not handle this properly.
+
+Here is one method I found to safely exit each child process:
+
+1. The main thread in each philosopher (child process) is blocked until a STOP condition occurs.
+
+2. There are two threads in each child process:
+
+   > One for the eat_sleep_think loop.
+
+   > One to monitor its own death.
+
+Both threads can call sem_post() to trigger the stop semaphore, which will unblock the main thread. The main thread can then handle cleanup with free() and call exit().
+
+3. The first philosopher starts eating first and his monitor_death thread waits on sem_wait(). This semaphore will be released when any philosopher (including himself) dies or when all philosophers have eaten enough.
+
+⚠️ Be careful of potential deadlocks. When a philosopher dies or reaches the required number of meals, all other blocked threads (e.g., sem_wait) must be properly unblocked to ensure clean pthread_join() and cleanup.

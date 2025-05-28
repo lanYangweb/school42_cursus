@@ -6,7 +6,7 @@
 /*   By: layang <layang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/15 16:59:56 by layang            #+#    #+#             */
-/*   Updated: 2025/05/16 12:57:44 by layang           ###   ########.fr       */
+/*   Updated: 2025/05/22 11:11:51 by layang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # include <stdbool.h>
+# include <string.h> 
 
 # ifndef DEBUG_MODE
 #  define DEBUG_MODE 0
@@ -63,6 +64,8 @@ typedef enum e_status
 	DIED = 5,
 }	t_status;
 
+/* mian.c  4 */
+int		ft_is_numeric(const char	*str);
 /* utils.c  5 */
 int		ft_atoi(const char *str);
 void	set_stop_flag(t_table	*tab, bool stat);

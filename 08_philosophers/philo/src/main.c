@@ -6,11 +6,39 @@
 /*   By: layang <layang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 13:54:32 by layang            #+#    #+#             */
-/*   Updated: 2025/05/16 12:50:40 by layang           ###   ########.fr       */
+/*   Updated: 2025/05/22 11:09:19 by layang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+static int	ft_isdigit(int c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
+}
+
+int	ft_is_numeric(const char *str)
+{
+	int	i;
+
+	i = 0;
+	while (*str == ' ')
+		str++;
+	if (*str == '+' || *str == '-')
+		str++;
+	while (ft_isdigit(*str))
+	{
+		str++;
+		i++;
+	}
+	while (*str == ' ')
+		str++;
+	if (*str == '\0' && i > 0)
+		return (1);
+	return (0);
+}
 
 static int	ft_start_philo(t_table	*tab)
 {
