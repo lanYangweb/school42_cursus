@@ -8,7 +8,7 @@ List of projects finished:
 
 # 📚 Libft Function Overview
 
-This repository contains the implementation of common C standard library functions, utility functions, and linked list operations as part of the `libft` project.
+This folder contains the implementation of common C standard library functions, utility functions, and linked list operations as part of the `libft` project.
 
 ---
 
